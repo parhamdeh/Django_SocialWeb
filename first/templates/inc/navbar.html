@@ -5,12 +5,18 @@
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="{% url 'home:home' %}">Home</a>
         </li>
+        {% if request.user.is_authenticated %}
+            <li>
+            <a class="nav-link active" aria-current="page" href="{% url 'register:user_logout' %}">logout</a>
+            </li>
+        {% endif %}
         <li>
           <a class="nav-link active" aria-current="page" href="{% url 'register:user_register' %}">Register</a>
         </li>
         <li>
           <a class="nav-link active" aria-current="page" href="{% url 'register:user_login' %}">Login</a>
         </li>
+        
     </div>
   
 </nav>

@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from .form import UserRegisterationForm, UserLoinForm
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
 
@@ -10,6 +10,11 @@ class UserRegisterView(View):
 
     form_class = UserRegisterationForm
     temmplate_name = 'account/register.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('home:home')
+        return super().dispatch(request, *args, **kwargs)
     def get(self, request):
         form = self.form_class()
         return render(request, self.temmplate_name, {'form' : form})
@@ -29,6 +34,10 @@ class UserRegisterView(View):
 class UserLoginView(View):
     form_class = UserLoinForm
     template_name = 'account/login.html'
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('home:home')
+        return super().dispatch(request, *args, **kwargs)
     def get(self, request):
         form = self.form_class()
         return render(request, self.template_name, {'form' : form})
@@ -47,3 +56,17 @@ class UserLoginView(View):
             messages.error(request, 'password is wrong', 'warning')
             
         return render(request, self.template_name, {'form': form})
+
+
+class UserLogoutView(View):
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('home:home')
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get(self, request):
+        logout(request)
+        messages.success(request, 'you loged out succesfuly!', 'success')
+        return redirect('home:home')
+
+    

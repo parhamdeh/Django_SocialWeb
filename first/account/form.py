@@ -46,4 +46,3 @@ class UserLoinForm(forms.Form):
             return username
         raise ValidationError('this username not exists!')
     
-    

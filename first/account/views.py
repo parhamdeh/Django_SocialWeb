@@ -4,6 +4,7 @@ from .form import UserRegisterationForm, UserLoinForm
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class UserRegisterView(View):
@@ -58,15 +59,18 @@ class UserLoginView(View):
         return render(request, self.template_name, {'form': form})
 
 
-class UserLogoutView(View):
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated:
-            return redirect('home:home')
-        return super().dispatch(request, *args, **kwargs)
+class UserLogoutView(LoginRequiredMixin, View):
+    # def dispatch(self, request, *args, **kwargs):
+    #     if request.user.is_authenticated:
+    #         return redirect('home:home')
+    #     return super().dispatch(request, *args, **kwargs)
     
     def get(self, request):
         logout(request)
         messages.success(request, 'you loged out succesfuly!', 'success')
         return redirect('home:home')
 
-    
+class UserProfileView(LoginRequiredMixin, View):
+    def get(self, request, user_id):
+        user = User.objects.get(pk=user_id)
+        return render(request, 'account/profile.html', {'user':user})

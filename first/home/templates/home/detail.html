@@ -2,6 +2,11 @@
 
 {% block contant %}
     
-    <p>{{ post.user }} - {{ post.updated|date:"Y" }}</p>
+    {% if request.user.id == post.user.id %}
+        <a href="{% url 'home:post_delete' post.id %}" class="btn btn-danger">Delete</a>
+        <a href="{% url 'home:post_update' post.id %}" class="btn btn-info">Update</a>
+    {% endif %}
+
+    <p><a href="{% url 'register:user_profile' post.user.id %}">{{ post.user }}</a> - {{ post.updated|date:"Y" }}</p>
     <p>{{ post.body }}</p>
 {% endblock %}

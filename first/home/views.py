@@ -3,7 +3,7 @@ from django.views import View
 from .models import Post
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from .forms import PostUpdateForm
+from .forms import PostUpdateForm, PostCreateForm
 from django.utils.text import slugify
 
 
@@ -64,3 +64,30 @@ class PostUpdateView(LoginRequiredMixin, View):
             new_post.save()
             messages.success(request, 'you updated post!', 'success')
             return redirect('home:post_detail', post.id, post.slug)
+        
+
+
+class PostCreateView(LoginRequiredMixin, View):
+    form_class = PostCreateForm #a form class
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('home:home')
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kewargs):
+        form = self.form_class()
+        return render(request, 'home/create.html', {'form':form})
+
+
+    def post(self, request, *args, **kewargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            new_post = form.save(commit=False)
+            new_post.slug = slugify(form.cleaned_data['body'][:30])
+            new_post.user = request.user
+            new_post.save()
+            messages.success(request, 'post created!!', 'success')
+            return redirect('home:post_detail', new_post.id, new_post.slug)
+        return redirect('home:post_create')
+        
+

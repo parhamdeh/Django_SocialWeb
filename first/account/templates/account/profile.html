@@ -4,7 +4,14 @@
 {% block contant %}
 
     <h2 class="text_center"> {{ user.username }}</h2>
-    <p>fudhgub</p>
+    
+    {% if request.user.id == user.id %}
+
+        <a href="{% url 'home:post_create' %}" class="btn btn-primary">Create</a>
+
+    {% endif %}
+
+
     <div class="card">
     {% for post in posts %}
         <a href="{{ post.get_absolute_url }}" class="card-body">

@@ -3,7 +3,7 @@ from django.views import View
 from .models import Post
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from .forms import PostUpdateForm, PostCreateForm
+from .forms import PostUpdateForm, PostCreateForm, CommentCreateForm
 from django.utils.text import slugify
 
 
@@ -17,9 +17,14 @@ class HomeView(View):
         return render(request, 'home/index.html')
 
 class PostDetailView(View):
+    form_class = CommentCreateForm
+
+
     def get(self, request, post_id, post_slug):
+        form = self.form_class()
         post = Post.objects.get(pk=post_id, slug=post_slug)
-        return render(request, 'home/detail.html', {'post':post})
+        comments = post.pcomments.filter(is_reply=False)
+        return render(request, 'home/detail.html', {'post':post, 'comments': comments, 'form':form})
     
 
 class PostDeleteView(LoginRequiredMixin, View):

@@ -9,4 +9,18 @@
 
     <p><a href="{% url 'register:user_profile' post.user.id %}">{{ post.user }}</a> - {{ post.updated|date:"Y" }}</p>
     <p>{{ post.body }}</p>
+
+    {}
+
+    {% for comment in comments %}
+        <div class="card bg-dark text-white">
+            <p class="card-header">{{ comment.user }} | {{ comment.created|timesince }}</p>
+            <p class="card-body">{{ comment.body }}</p>
+        </div>
+    {% empty %}
+        <p>no comments yet!</p>
+    {% endfor %}
+
+
+
 {% endblock %}

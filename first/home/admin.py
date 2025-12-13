@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post, Comment
+from .models import Post, Comment, Vote
 
 class PostAdmin(admin.ModelAdmin): 
     list_display = ('user', 'slug', 'update')
@@ -15,3 +15,4 @@ class CommentAdmi(admin.ModelAdmin):
 
 admin.site.register(Post)
 admin.site.register(Comment)
+admin.site.register(Vote)

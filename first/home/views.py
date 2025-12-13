@@ -3,16 +3,19 @@ from django.views import View
 from .models import Post, Comment, Vote
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from .forms import PostUpdateForm, PostCreateForm, CommentCreateForm, CommentReplyForm
+from .forms import PostUpdateForm, PostCreateForm, CommentCreateForm, CommentReplyForm, PostSearchForm
 from django.utils.text import slugify
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
 
 class HomeView(View):
+    form_class = PostSearchForm
     def get(self, request):
         posts = Post.objects.all()
-        return render(request, 'home/index.html', {'posts':posts})
+        if request.GET.get('search'):
+            posts = posts.filter(body__contains=request.GET['search'])
+        return render(request, 'home/index.html', {'posts':posts, 'search_form':self.form_class})
     
 
     def post(self, request):
@@ -142,3 +145,4 @@ class PostLikeView(LoginRequiredMixin, View):
             Vote.objects.create(user = request.user, post=post)
             messages.success(request, 'you liked this post', 'success')
         return redirect('home:post_detail', post.id, post.slug)
+    
